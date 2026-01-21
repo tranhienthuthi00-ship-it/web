@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cute Gift UI</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: repeating-linear-gradient(
+        45deg,
+        #fde2ea 0px,
+        #fde2ea 40px,
+        #fff3e8 40px,
+        #fff3e8 80px
+    );
+    background-attachment: fixed;
+}
+
+/* Welcome */
+.welcome {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #c94b73;
+    margin: 16px 0 8px;
+    letter-spacing: 2px;
+}
+
+/* Tabs */
+.tab-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    cursor: pointer;
+    font-weight: bold;
+    color: #c94b73;
+    padding-bottom: 3px;
+}
+
+.tab.active {
+    border-bottom: 2px solid #c94b73;
+}
+
+/* Pages */
+.page { display:none; text-align:center; }
+.page.active { display:block; }
+
+/* ================= GIFT CARD ================= */
+.gift-card {
+    width: 90%;
+    max-width: 320px;
+    aspect-ratio: 4 / 3;
+    background: #ffd9bd;
+    margin: 24px auto;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.14);
+    overflow: hidden;
+}
+
+/* răng cưa */
+.gift-card::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(135deg, transparent 75%, #ffd9bd 0) 0 0/10px 10px,
+      linear-gradient(225deg, transparent 75%, #ffd9bd 0) 0 0/10px 10px,
+      linear-gradient(315deg, transparent 75%, #ffd9bd 0) 0 0/10px 10px,
+      linear-gradient(45deg,  transparent 75%, #ffd9bd 0) 0 0/10px 10px;
+    pointer-events:none;
+}
+
+.ribbon-svg {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:3;
+}
+
+.illustration { position:absolute; inset:0; z-index:1; }
+
+.sticker {
+    position:absolute;
+    font-size:12px;
+    color:#8a3d57;
+    background:#fff3e8;
+    padding:4px 8px;
+    border-radius:6px;
+    transform:rotate(-6deg);
+}
+.sticker.star { top:14px; left:14px; }
+.sticker.love { bottom:16px; right:16px; transform:rotate(8deg); }
+
+.stamp {
+    position:absolute;
+    top:16px; right:16px;
+    width:46px; height:46px;
+    border:2px dashed #b45b7c;
+    border-radius:8px;
+    font-size:10px;
+    color:#b45b7c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:rotate(6deg);
+}
+
+.gift-title {
+    position:absolute;
+    bottom:14px;
+    width:100%;
+    text-align:center;
+    font-weight:bold;
+    color:#7a2e4b;
+    font-size:15px;
+    z-index:2;
+}
+
+/* ================= ENGLISH ================= */
+.english-card {
+    max-width: 320px;
+    margin: 20px auto;
+    background: #fff3e8;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.en-word {
+    font-size: 22px;
+    font-weight: bold;
+    color: #c94b73;
+}
+
+.vi-word {
+    margin-top: 8px;
+    color: #7a2e4b;
+    display: none;
+}
+
+.btn-row {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-row button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 14px;
+    background: #c94b73;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.english-tab { display:none; }
+.english-tab.active { display:block; }
+
+/* GAME */
+.game-options {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.game-options button {
+    border:none;
+    padding:8px;
+    border-radius:12px;
+    background:#fff;
+    cursor:pointer;
+}
+.game-result {
+    margin-top:10px;
+    font-weight:bold;
+}
+
+/* DICTIONARY */
+.dict-input {
+    width: 90%;
+    padding: 8px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+.dict-list {
+    margin-top: 10px;
+    text-align: left;
+}
+.dict-item {
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.dict-item.active {
+    background: #ffd9bd;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="welcome">WELCOME</div>
+
+<div class="tab-bar">
+    <div class="tab active" onclick="showPage('home',this)">Home</div>
+    <div class="tab" onclick="showPage('english',this)">English</div>
+    <div class="tab" onclick="showPage('memory',this)">Memory</div>
+    <div class="tab" onclick="showPage('food',this)">Food</div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="page active">
+<div class="gift-card">
+<div class="illustration">
+    <div class="sticker star">★ fragile</div>
+    <div class="stamp">from Hien<br>WITH<br>LOVE</div>
+    <div class="sticker love">to you ♡</div>
+</div>
+
+<svg class="ribbon-svg" viewBox="0 0 320 240" preserveAspectRatio="none">
+<path d="M0 120 C90 110, 230 130, 320 120" stroke="#b45b7c" stroke-width="2" stroke-dasharray="5 6" fill="none"/>
+<path d="M160 0 C150 90, 170 150, 160 240" stroke="#b45b7c" stroke-width="2" stroke-dasharray="5 6" fill="none"/>
+<path d="M160 120 C130 95,100 105,115 130 C130 155,150 145,160 120" stroke="#b45b7c" stroke-width="2" stroke-dasharray="4 6" fill="none"/>
+<path d="M160 120 C190 95,220 105,205 130 C190 155,170 145,160 120" stroke="#b45b7c" stroke-width="2" stroke-dasharray="4 6" fill="none"/>
+<path d="M154 126 C138 150,136 175,144 205" stroke="#b45b7c" stroke-width="2" stroke-dasharray="4 7" fill="none"/>
+<path d="M166 126 C182 150,184 175,176 205" stroke="#b45b7c" stroke-width="2" stroke-dasharray="4 7" fill="none"/>
+</svg>
+
+<div class="gift-title">A tiny gift for you</div>
+</div>
+</div>
+
+<!-- ENGLISH -->
+<div id="english" class="page">
+
+<div class="tab-bar">
+    <div class="tab active" onclick="showEnglishTab('flash',this)">Flashcard</div>
+    <div class="tab" onclick="showEnglishTab('game',this)">Game</div>
+    <div class="tab" onclick="showEnglishTab('dictionary',this)">Dictionary</div>
+</div>
+
+<!-- FLASH -->
+<div id="flash" class="english-tab active">
+<div class="english-card">
+    <div class="en-word" id="enWord">Loading…</div>
+    <div class="vi-word" id="viWord"></div>
+    <div class="btn-row">
+        <button onclick="toggleVI()">Hiện nghĩa</button>
+        <button onclick="rateWord()">Next</button>
+    </div>
+</div>
+</div>
+
+<!-- GAME -->
+<div id="game" class="english-tab">
+<div class="english-card">
+    <div class="en-word" id="gameWord"></div>
+    <div class="game-options" id="options"></div>
+    <div class="game-result" id="result"></div>
+    <button style="margin-top:10px" onclick="nextGame()">Next</button>
+</div>
+</div>
+
+<!-- DICTIONARY -->
+<div id="dictionary" class="english-tab">
+<div class="english-card">
+    <input class="dict-input" id="dictInput" placeholder="Search English or Vietnamese..." />
+    <div class="dict-list" id="dictList"></div>
+</div>
+</div>
+
+</div>
+
+<div id="memory" class="page">📸 Memory</div>
+<div id="food" class="page">🍰 Food</div>
+
+<script>
+function showPage(id,el){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active'); el.classList.add('active');
+}
+function showEnglishTab(id,el){
+document.querySelectorAll('.english-tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('#english .tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active'); el.classList.add('active');
+}
+
+const SHEET="https://opensheet.elk.sh/11RjgH-4a8mENEkDNTv2UFsRzZGy73JJ9YNXz5HR2Tt8/Sheet1";
+let vocab=[], dictResults=[], dictIndex=-1;
+
+fetch(SHEET).then(r=>r.json()).then(d=>{ vocab=d; renderWord(); loadGame(); });
+
+let currentWord=null;
+function renderWord(){
+currentWord=vocab[Math.floor(Math.random()*vocab.length)];
+document.getElementById("enWord").innerText=currentWord.EN;
+document.getElementById("viWord").innerText=currentWord.VI;
+document.getElementById("viWord").style.display="none";
+}
+function toggleVI(){
+const v=document.getElementById("viWord");
+v.style.display=v.style.display==="none"?"block":"none";
+}
+function rateWord(){ renderWord(); }
+
+let gameIndex=0;
+function loadGame(){
+const c=vocab[gameIndex];
+document.getElementById("gameWord").innerText=c.EN;
+let ch=[c.VI];
+while(ch.length<3){
+let r=vocab[Math.floor(Math.random()*vocab.length)].VI;
+if(!ch.includes(r)) ch.push(r);
+}
+ch.sort(()=>Math.random()-0.5);
+const o=document.getElementById("options");
+o.innerHTML=""; document.getElementById("result").innerText="";
+ch.forEach(x=>{
+let b=document.createElement("button");
+b.innerText=x;
+b.onclick=()=>document.getElementById("result").innerText=(x===c.VI?"✔ Đúng":"✖ Sai");
+o.appendChild(b);
+});
+}
+function nextGame(){ gameIndex=(gameIndex+1)%vocab.length; loadGame(); }
+
+const input=document.getElementById("dictInput");
+const list=document.getElementById("dictList");
+
+input.oninput=()=>{
+const q=input.value.toLowerCase();
+dictResults=vocab.filter(v=>
+v.EN.toLowerCase().includes(q) || v.VI.toLowerCase().includes(q)
+).slice(0,20);
+dictIndex=-1;
+renderDict();
+};
+
+function renderDict(){
+list.innerHTML="";
+dictResults.forEach((w,i)=>{
+const d=document.createElement("div");
+d.className="dict-item"+(i===dictIndex?" active":"");
+d.innerText=w.EN+" — "+w.VI;
+d.onclick=()=>selectDict(i);
+list.appendChild(d);
+});
+}
+
+function highlight(){
+document.querySelectorAll(".dict-item").forEach((d,i)=>{
+d.classList.toggle("active",i===dictIndex);
+});
+}
+
+function speakEN(text){
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(text);
+u.lang="en-US";
+u.rate=0.9;
+speechSynthesis.speak(u);
+}
+
+function selectDict(i){
+dictIndex=i;
+highlight();
+speakEN(dictResults[i].EN);
+}
+
+document.addEventListener("keydown",e=>{
+if(!document.getElementById("dictionary").classList.contains("active")) return;
+if(dictResults.length===0) return;
+
+if(e.key==="ArrowDown"){
+e.preventDefault();
+dictIndex=(dictIndex+1)%dictResults.length; highlight();
+}
+if(e.key==="ArrowUp"){
+e.preventDefault();
+dictIndex=(dictIndex-1+dictResults.length)%dictResults.length; highlight();
+}
+if(e.key==="Enter" && dictIndex>=0){
+selectDict(dictIndex);
+}
+});
+</script>
+
+</body>
+</html>
