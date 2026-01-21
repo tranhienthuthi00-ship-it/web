@@ -19,14 +19,23 @@ body {
     background-attachment: fixed;
 }
 
+/* ================= TOP BAR ================= */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    gap: 10px;
+}
+
 /* Welcome */
 .welcome {
-    text-align: center;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: bold;
     color: #c94b73;
-    margin: 16px 0 8px;
     letter-spacing: 2px;
+    flex: 1;
+    text-align: left;
 }
 
 /* Tabs */
@@ -34,7 +43,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 24px;
-    margin-bottom: 14px;
+    flex: 2;
     flex-wrap: wrap;
 }
 
@@ -47,6 +56,18 @@ body {
 
 .tab.active {
     border-bottom: 2px solid #c94b73;
+}
+
+/* Search */
+.top-search {
+    flex: 1;
+    max-width: 160px;
+    padding: 6px 12px;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    background: #fff3e8;
 }
 
 /* Pages */
@@ -216,13 +237,18 @@ body {
 
 <body>
 
-<div class="welcome">WELCOME</div>
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="welcome">WELCOME</div>
 
-<div class="tab-bar">
-    <div class="tab active" onclick="showPage('home',this)">Home</div>
-    <div class="tab" onclick="showPage('english',this)">English</div>
-    <div class="tab" onclick="showPage('memory',this)">Memory</div>
-    <div class="tab" onclick="showPage('food',this)">Food</div>
+    <div class="tab-bar">
+        <div class="tab active" onclick="showPage('home',this)">Home</div>
+        <div class="tab" onclick="showPage('english',this)">English</div>
+        <div class="tab" onclick="showPage('memory',this)">Memory</div>
+        <div class="tab" onclick="showPage('food',this)">Food</div>
+    </div>
+
+    <input class="top-search" placeholder="Search…" />
 </div>
 
 <!-- HOME -->
@@ -256,7 +282,6 @@ body {
     <div class="tab" onclick="showEnglishTab('dictionary',this)">Dictionary</div>
 </div>
 
-<!-- FLASH -->
 <div id="flash" class="english-tab active">
 <div class="english-card">
     <div class="en-word" id="enWord">Loading…</div>
@@ -268,7 +293,6 @@ body {
 </div>
 </div>
 
-<!-- GAME -->
 <div id="game" class="english-tab">
 <div class="english-card">
     <div class="en-word" id="gameWord"></div>
@@ -278,7 +302,6 @@ body {
 </div>
 </div>
 
-<!-- DICTIONARY -->
 <div id="dictionary" class="english-tab">
 <div class="english-card">
     <input class="dict-input" id="dictInput" placeholder="Search English or Vietnamese..." />
@@ -341,66 +364,6 @@ o.appendChild(b);
 });
 }
 function nextGame(){ gameIndex=(gameIndex+1)%vocab.length; loadGame(); }
-
-const input=document.getElementById("dictInput");
-const list=document.getElementById("dictList");
-
-input.oninput=()=>{
-const q=input.value.toLowerCase();
-dictResults=vocab.filter(v=>
-v.EN.toLowerCase().includes(q) || v.VI.toLowerCase().includes(q)
-).slice(0,20);
-dictIndex=-1;
-renderDict();
-};
-
-function renderDict(){
-list.innerHTML="";
-dictResults.forEach((w,i)=>{
-const d=document.createElement("div");
-d.className="dict-item"+(i===dictIndex?" active":"");
-d.innerText=w.EN+" — "+w.VI;
-d.onclick=()=>selectDict(i);
-list.appendChild(d);
-});
-}
-
-function highlight(){
-document.querySelectorAll(".dict-item").forEach((d,i)=>{
-d.classList.toggle("active",i===dictIndex);
-});
-}
-
-function speakEN(text){
-speechSynthesis.cancel();
-const u=new SpeechSynthesisUtterance(text);
-u.lang="en-US";
-u.rate=0.9;
-speechSynthesis.speak(u);
-}
-
-function selectDict(i){
-dictIndex=i;
-highlight();
-speakEN(dictResults[i].EN);
-}
-
-document.addEventListener("keydown",e=>{
-if(!document.getElementById("dictionary").classList.contains("active")) return;
-if(dictResults.length===0) return;
-
-if(e.key==="ArrowDown"){
-e.preventDefault();
-dictIndex=(dictIndex+1)%dictResults.length; highlight();
-}
-if(e.key==="ArrowUp"){
-e.preventDefault();
-dictIndex=(dictIndex-1+dictResults.length)%dictResults.length; highlight();
-}
-if(e.key==="Enter" && dictIndex>=0){
-selectDict(dictIndex);
-}
-});
 </script>
 
 </body>
