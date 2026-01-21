@@ -6,6 +6,7 @@
 <title>Cute Gift UI</title>
 
 <style>
+/* ====== GIỮ NGUYÊN CSS GỐC ====== */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -19,23 +20,14 @@ body {
     background-attachment: fixed;
 }
 
-/* ================= TOP BAR ================= */
-.top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    gap: 10px;
-}
-
 /* Welcome */
 .welcome {
-    font-size: 22px;
+    text-align: center;
+    font-size: 28px;
     font-weight: bold;
     color: #c94b73;
+    margin: 16px 0 8px;
     letter-spacing: 2px;
-    flex: 1;
-    text-align: left;
 }
 
 /* Tabs */
@@ -43,7 +35,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 24px;
-    flex: 2;
+    margin-bottom: 14px;
     flex-wrap: wrap;
 }
 
@@ -56,18 +48,6 @@ body {
 
 .tab.active {
     border-bottom: 2px solid #c94b73;
-}
-
-/* Search */
-.top-search {
-    flex: 1;
-    max-width: 160px;
-    padding: 6px 12px;
-    border-radius: 14px;
-    border: none;
-    outline: none;
-    font-size: 13px;
-    background: #fff3e8;
 }
 
 /* Pages */
@@ -237,18 +217,32 @@ body {
 
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-    <div class="welcome">WELCOME</div>
-
-    <div class="tab-bar">
-        <div class="tab active" onclick="showPage('home',this)">Home</div>
-        <div class="tab" onclick="showPage('english',this)">English</div>
-        <div class="tab" onclick="showPage('memory',this)">Memory</div>
-        <div class="tab" onclick="showPage('food',this)">Food</div>
+<!-- ===== LOGIN OVERLAY (THÊM) ===== -->
+<div id="loginOverlay" style="
+position:fixed;
+inset:0;
+background:rgba(255,243,232,.96);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+">
+  <div class="english-card">
+    <div class="en-word">Welcome 🎁</div>
+    <input id="loginName" class="dict-input" placeholder="Your name…" />
+    <div class="btn-row">
+      <button onclick="login()">Start</button>
     </div>
+  </div>
+</div>
 
-    <input class="top-search" placeholder="Search…" />
+<div class="welcome">WELCOME</div>
+
+<div class="tab-bar">
+    <div class="tab active" onclick="showPage('home',this)">Home</div>
+    <div class="tab" onclick="showPage('english',this)">English</div>
+    <div class="tab" onclick="showPage('memory',this)">Memory</div>
+    <div class="tab" onclick="showPage('food',this)">Food</div>
 </div>
 
 <!-- HOME -->
@@ -282,6 +276,7 @@ body {
     <div class="tab" onclick="showEnglishTab('dictionary',this)">Dictionary</div>
 </div>
 
+<!-- FLASH -->
 <div id="flash" class="english-tab active">
 <div class="english-card">
     <div class="en-word" id="enWord">Loading…</div>
@@ -293,6 +288,7 @@ body {
 </div>
 </div>
 
+<!-- GAME -->
 <div id="game" class="english-tab">
 <div class="english-card">
     <div class="en-word" id="gameWord"></div>
@@ -302,6 +298,7 @@ body {
 </div>
 </div>
 
+<!-- DICTIONARY -->
 <div id="dictionary" class="english-tab">
 <div class="english-card">
     <input class="dict-input" id="dictInput" placeholder="Search English or Vietnamese..." />
@@ -315,6 +312,7 @@ body {
 <div id="food" class="page">🍰 Food</div>
 
 <script>
+/* ===== CODE GỐC ===== */
 function showPage(id,el){
 document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
 document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -345,25 +343,137 @@ v.style.display=v.style.display==="none"?"block":"none";
 function rateWord(){ renderWord(); }
 
 let gameIndex=0;
+
+/* ===== GAME (ĐÃ THÊM TỰ LUẬN + LƯU) ===== */
 function loadGame(){
 const c=vocab[gameIndex];
 document.getElementById("gameWord").innerText=c.EN;
+let o=document.getElementById("options");
+o.innerHTML=""; document.getElementById("result").innerText="";
+
+PROGRESS.total++;
+
+if(gameIndex % 2 === 0){
 let ch=[c.VI];
 while(ch.length<3){
 let r=vocab[Math.floor(Math.random()*vocab.length)].VI;
 if(!ch.includes(r)) ch.push(r);
 }
 ch.sort(()=>Math.random()-0.5);
-const o=document.getElementById("options");
-o.innerHTML=""; document.getElementById("result").innerText="";
+
 ch.forEach(x=>{
 let b=document.createElement("button");
 b.innerText=x;
-b.onclick=()=>document.getElementById("result").innerText=(x===c.VI?"✔ Đúng":"✖ Sai");
+b.onclick=()=>{
+document.getElementById("result").innerText=(x===c.VI?"✔ Đúng":"✖ Sai");
+if(x===c.VI) PROGRESS.correct++;
+saveProgress();
+};
 o.appendChild(b);
 });
+}else{
+const input=document.createElement("input");
+input.className="dict-input";
+input.placeholder="Nhập nghĩa tiếng Việt…";
+
+const btn=document.createElement("button");
+btn.innerText="Check";
+btn.onclick=()=>{
+if(input.value.trim().toLowerCase()===c.VI.toLowerCase()){
+document.getElementById("result").innerText="✔ Chính xác";
+PROGRESS.correct++;
+}else{
+document.getElementById("result").innerText="✖ Đúng là: "+c.VI;
 }
+saveProgress();
+};
+
+o.appendChild(input);
+o.appendChild(btn);
+}
+}
+
 function nextGame(){ gameIndex=(gameIndex+1)%vocab.length; loadGame(); }
+
+/* ===== DICTIONARY GỐC ===== */
+const input=document.getElementById("dictInput");
+const list=document.getElementById("dictList");
+
+input.oninput=()=>{
+const q=input.value.toLowerCase();
+dictResults=vocab.filter(v=>
+v.EN.toLowerCase().includes(q) || v.VI.toLowerCase().includes(q)
+).slice(0,20);
+dictIndex=-1;
+renderDict();
+};
+
+function renderDict(){
+list.innerHTML="";
+dictResults.forEach((w,i)=>{
+const d=document.createElement("div");
+d.className="dict-item"+(i===dictIndex?" active":"");
+d.innerText=w.EN+" — "+w.VI;
+d.onclick=()=>selectDict(i);
+list.appendChild(d);
+});
+}
+
+function highlight(){
+document.querySelectorAll(".dict-item").forEach((d,i)=>{
+d.classList.toggle("active",i===dictIndex);
+});
+}
+
+function speakEN(text){
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(text);
+u.lang="en-US";
+u.rate=0.9;
+speechSynthesis.speak(u);
+}
+
+function selectDict(i){
+dictIndex=i;
+highlight();
+speakEN(dictResults[i].EN);
+}
+
+document.addEventListener("keydown",e=>{
+if(!document.getElementById("dictionary").classList.contains("active")) return;
+if(dictResults.length===0) return;
+
+if(e.key==="ArrowDown"){
+e.preventDefault();
+dictIndex=(dictIndex+1)%dictResults.length; highlight();
+}
+if(e.key==="ArrowUp"){
+e.preventDefault();
+dictIndex=(dictIndex-1+dictResults.length)%dictResults.length; highlight();
+}
+if(e.key==="Enter" && dictIndex>=0){
+selectDict(dictIndex);
+}
+});
+
+/* ===== LOGIN + PROGRESS (THÊM) ===== */
+let USER=null;
+let PROGRESS={correct:0,total:0};
+
+function login(){
+const name=document.getElementById("loginName").value.trim();
+if(!name) return alert("Nhập tên trước nhé 🌸");
+USER=name;
+const saved=localStorage.getItem("gift_user_"+USER);
+if(saved) PROGRESS=JSON.parse(saved);
+document.getElementById("loginOverlay").style.display="none";
+}
+
+function saveProgress(){
+if(USER){
+localStorage.setItem("gift_user_"+USER,JSON.stringify(PROGRESS));
+}
+}
 </script>
 
 </body>
